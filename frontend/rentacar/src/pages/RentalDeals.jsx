@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const RentalDeals = () => {
   const carData = [
@@ -126,7 +126,9 @@ const RentalDeals = () => {
       </div>
 
       <button className="flex gap-2 justify-center items-center p-2 mx-auto mt-16 mb-0 text-sm font-semibold text-yellow-400 rounded-lg border border-white border-solid cursor-pointer transition-all hover:bg-yellow-400 hover:text-blue-950">
-        <span><Link to="/cars">Show all vehicles</Link></span>
+        <span>
+          <Link to="/cars">Show all vehicles</Link>
+        </span>
         <i className="ti ti-arrow-right" />
       </button>
     </section>
