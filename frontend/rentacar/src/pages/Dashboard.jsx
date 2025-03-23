@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ListCar from "../components/ListCar";
 import {
   FaUser,
   FaCarAlt,
@@ -193,6 +194,22 @@ const Dashboard = () => {
             >
               <FaCarAlt className="mr-2" />
               Bookings
+            </button>
+            <button
+              className={`flex items-center px-6 py-4 text-lg font-medium transition-colors duration-200 ${
+                activeTab === "listings"
+                  ? "text-primary border-b-2 border-primary"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+              style={{
+                color: activeTab === "listings" ? colors.primary : colors.lightText,
+                borderBottomColor:
+                  activeTab === "listings" ? colors.primary : "transparent",
+              }}
+              onClick={() => setActiveTab("listings")}
+            >
+              <FaCarAlt className="mr-2" />
+              My Listings
             </button>
           </div>
 
@@ -503,6 +520,16 @@ const Dashboard = () => {
                   </button>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Listings Tab */}
+          {activeTab === "listings" && (
+            <div className="p-6">
+              <h3 className="text-xl font-semibold mb-6" style={{ color: colors.text }}>
+                Your Listed Cars
+              </h3>
+              <ListCar />
             </div>
           )}
         </div>

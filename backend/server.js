@@ -24,24 +24,25 @@ mongoose
 
 // Car Model
 const carSchema = new mongoose.Schema({
-    make: { type: String, required: true },
-    model: { type: String, required: true },
-    year: { type: Number, required: true },
-    price: { type: Number, required: true },
-    transmission: { type: String, default: 'Automatic' },
-    seats: { type: Number, default: 5 },
-    fuelType: { type: String, default: 'Gasoline' },
-    available: { type: Boolean, default: true },
-    image: { type: String },
-    category: { type: String, default: 'Standard' },
-    description: { type: String },
-    features: [{ type: String }],
-    licensePlate: { type: String, unique: true, sparse: true }, // Added licensePlate field with sparse index
-    location: {
-        type: String,
-        enum: ["Thrissur", "Irinjalakuda", "Chalakudy"],
-        required: true,
-      },
+  make: { type: String, required: true },
+  model: { type: String, required: true },
+  year: { type: Number, required: true },
+  price: { type: Number, required: true },
+  transmission: { type: String, default: "Automatic" },
+  seats: { type: Number, default: 5 },
+  fuelType: { type: String, default: "Gasoline" },
+  available: { type: Boolean, default: true },
+  image: { type: String },
+  category: { type: String, default: "Standard" },
+  description: { type: String },
+  features: [{ type: String }],
+  licensePlate: { type: String, unique: true, sparse: true },
+  location: {
+    type: String,
+    enum: ["Thrissur", "Irinjalakuda", "Chalakudy"],
+    required: true,
+  },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Reference to the user who listed the car
 });
 
 const Car = mongoose.model("Car", carSchema);
@@ -249,6 +250,80 @@ app.get("/api/bookings", authMiddleware, async (req, res) => {
     res.json(bookings);
   } catch (error) {
     console.error("Error fetching bookings:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// UserCar Schema
+const userCarSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  make: { type: String, required: true },
+  model: { type: String, required: true },
+  year: { type: Number, required: true },
+  price: { type: Number, required: true },
+  transmission: { type: String, default: "Automatic" },
+  seats: { type: Number, default: 5 },
+  fuelType: { type: String, default: "Gasoline" },
+  available: { type: Boolean, default: true },
+  image: { type: String },
+  category: { type: String, default: "Standard" },
+  description: { type: String },
+  location: {
+    type: String,
+    enum: ["Thrissur", "Irinjalakuda", "Chalakudy"],
+    required: true,
+  },
+});
+
+const UserCar = mongoose.model("UserCar", userCarSchema);
+
+// Route to Add a Car for Rent (Save in Car Collection)
+app.post("/api/user-cars", authMiddleware, async (req, res) => {
+  try {
+    const {
+      make,
+      model,
+      year,
+      price,
+      transmission,
+      seats,
+      fuelType,
+      image,
+      category,
+      description,
+      location,
+    } = req.body;
+
+    const car = new Car({
+      make,
+      model,
+      year,
+      price,
+      transmission,
+      seats,
+      fuelType,
+      image,
+      category,
+      description,
+      location,
+      available: true, // Mark the car as available by default
+    });
+
+    await car.save();
+    res.status(201).json({ message: "Car listed successfully", car });
+  } catch (error) {
+    console.error("Error listing car:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Route to Get Cars Listed by the User
+app.get("/api/user-cars", authMiddleware, async (req, res) => {
+  try {
+    const userCars = await UserCar.find({ userId: req.user.userId });
+    res.json(userCars);
+  } catch (error) {
+    console.error("Error fetching user cars:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });

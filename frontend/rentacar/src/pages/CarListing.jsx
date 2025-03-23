@@ -20,53 +20,18 @@ function CarListing() {
   useEffect(() => {
     const fetchCars = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/cars");
+        const response = await fetch("http://localhost:5000/api/cars"); // Fetch all cars
 
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
         const data = await response.json();
-        setCars(data);
+        setCars(data); // Set all cars (including user-listed cars)
         setLoading(false);
       } catch (err) {
         setError(err.message);
         setLoading(false);
-        // Load fallback data in case API is not available
-        setCars([
-          {
-            _id: "1",
-            make: "Toyota",
-            model: "Camry",
-            year: 2023,
-            price: 50,
-            image: "https://via.placeholder.com/300x200",
-          },
-          {
-            _id: "2",
-            make: "Honda",
-            model: "Accord",
-            year: 2022,
-            price: 45,
-            image: "https://via.placeholder.com/300x200",
-          },
-          {
-            _id: "3",
-            make: "Tesla",
-            model: "Model 3",
-            year: 2023,
-            price: 75,
-            image: "https://via.placeholder.com/300x200",
-          },
-          {
-            _id: "4",
-            make: "BMW",
-            model: "3 Series",
-            year: 2022,
-            price: 65,
-            image: "https://via.placeholder.com/300x200",
-          },
-        ]);
       }
     };
 
