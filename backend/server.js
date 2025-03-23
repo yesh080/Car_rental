@@ -42,6 +42,7 @@ const carSchema = new mongoose.Schema({
     enum: ["Thrissur", "Irinjalakuda", "Chalakudy"],
     required: true,
   },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
 const Car = mongoose.model("Car", carSchema);
@@ -256,3 +257,36 @@ app.post("/api/bookings", authMiddleware, async (req, res) => {
 
     // Create a new booking
     const booking = new Booking({
+      userId: req.user.userId,
+      carId,
+      pickupDate,
+      dropoffDate,
+      location,
+    });
+
+    await booking.save();
+    res.status(201).json({ message: "Booking created successfully", booking });
+  } catch (error) {
+    console.error("Error creating booking:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Get User's Bookings Route
+app.get("/api/bookings", authMiddleware, async (req, res) => {
+  try {
+    const bookings = await Booking.find({ userId: req.user.userId }).populate(
+      "carId",
+      "make model year price image location"
+    );
+
+    res.json(bookings);
+  } catch (error) {
+    console.error("Error fetching bookings:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
