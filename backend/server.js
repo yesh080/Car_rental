@@ -157,3 +157,58 @@ app.put("/profile", authMiddleware, async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+// Booking Schema
+const bookingSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  carId: { type: mongoose.Schema.Types.ObjectId, ref: "Car", required: true },
+  pickupDate: { type: Date, required: true },
+  dropoffDate: { type: Date, required: true },
+  status: { type: String, default: "Active" }, // e.g., Active, Completed, Canceled
+});
+
+const Booking = mongoose.model("Booking", bookingSchema);
+
+// Create Booking Route
+app.post("/api/bookings", authMiddleware, async (req, res) => {
+  try {
+    const { carId, pickupDate, dropoffDate } = req.body;
+
+    // Check if the car is available
+    const car = await Car.findById(carId);
+    if (!car || !car.available) {
+      return res.status(400).json({ error: "Car is not available" });
+    }
+
+    // Create a new booking
+    const booking = new Booking({
+      userId: req.user.userId,
+      carId,
+      pickupDate,
+      dropoffDate,
+    });
+    await booking.save();
+
+    // Mark the car as unavailable
+    car.available = false;
+    await car.save();
+
+    res.status(201).json({ message: "Booking created successfully", booking });
+  } catch (error) {
+    console.error("Error creating booking:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Get User's Bookings Route
+app.get("/api/bookings", authMiddleware, async (req, res) => {
+  try {
+    const bookings = await Booking.find({ userId: req.user.userId }).populate(
+      "carId",
+      "make model year price image"
+    );
+    res.json(bookings);
+  } catch (error) {
+    console.error("Error fetching bookings:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});

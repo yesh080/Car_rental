@@ -445,38 +445,29 @@ const Dashboard = () => {
                       {bookings.map((booking, index) => (
                         <tr
                           key={index}
-                          className="border-t hover:bg-gray-50 transition-colors duration-150"
+                          className="border-t hover:bg-gray-50 transition-colors"
                         >
                           <td className="py-4 px-4">
                             <div className="flex items-center">
-                              <div
-                                className="w-8 h-8 rounded-full flex items-center justify-center mr-3"
-                                style={{
-                                  backgroundColor: colors.primary + "20",
-                                }}
-                              >
-                                <FaCarAlt style={{ color: colors.primary }} />
-                              </div>
-                              {booking.carModel}
+                              <img
+                                src={booking.carId.image}
+                                alt={booking.carId.model}
+                                className="w-12 h-12 rounded mr-3"
+                              />
+                              {booking.carId.make} {booking.carId.model}
                             </div>
                           </td>
-                          <td className="py-4 px-4">{booking.pickupDate}</td>
-                          <td className="py-4 px-4">{booking.dropoffDate}</td>
+                          <td className="py-4 px-4">{new Date(booking.pickupDate).toDateString()}</td>
+                          <td className="py-4 px-4">{new Date(booking.dropoffDate).toDateString()}</td>
                           <td className="py-4 px-4">
                             <span
-                              className="px-3 py-1 rounded-full text-sm font-medium"
-                              style={{
-                                backgroundColor:
-                                  booking.status === "Active"
-                                    ? colors.secondary + "20"
-                                    : colors.warning + "20",
-                                color:
-                                  booking.status === "Active"
-                                    ? colors.secondary
-                                    : colors.warning,
-                              }}
+                              className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                booking.status === "Active"
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-gray-100 text-gray-800"
+                              }`}
                             >
-                              {booking.status || "Active"}
+                              {booking.status}
                             </span>
                           </td>
                         </tr>
