@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Star, Users, Gauge, Snowflake, DoorOpen } from 'lucide-react';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Star, Users, Gauge, Snowflake, DoorOpen } from "lucide-react";
 
 function CarCard({ car }) {
   return (
@@ -8,7 +8,7 @@ function CarCard({ car }) {
       {/* Clickable Card */}
       <Link to={`/cars/${car._id}`} className="block">
         {/* Car Image */}
-        <img 
+        <img
           src={car.image || "/api/placeholder/320/200"}
           alt={`${car.make} ${car.model}`}
           className="w-full h-48 object-cover rounded-t-lg"
@@ -19,13 +19,17 @@ function CarCard({ car }) {
       <div className="px-4 pb-4">
         {/* Name and Rating */}
         <div className="mb-2">
-          <h2 className="text-lg font-bold">{car.make} {car.model}</h2>
+          <h2 className="text-lg font-bold">
+            {car.make} {car.model}
+          </h2>
           <div className="flex items-center">
             <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-            <span className="ml-1 text-sm">{car.rating} ({car.reviews} reviews)</span>
+            <span className="ml-1 text-sm">
+              {car.rating} ({car.reviews} reviews)
+            </span>
           </div>
         </div>
-        
+
         {/* Features */}
         <div className="flex flex-wrap text-gray-500 text-sm mb-4">
           <div className="flex items-center mr-4 mb-2">
@@ -34,7 +38,7 @@ function CarCard({ car }) {
           </div>
           <div className="flex items-center mr-4 mb-2">
             <Gauge className="w-4 h-4 mr-1" />
-            <span>{car.transmission || 'Auto'}</span>
+            <span>{car.transmission || "Auto"}</span>
           </div>
           <div className="flex items-center mr-4 mb-2">
             <Snowflake className="w-4 h-4 mr-1" />
@@ -50,7 +54,7 @@ function CarCard({ car }) {
         <div>
           <p className="text-sm font-medium mb-2">Price</p>
           <p className="text-lg font-bold mb-3">Rs. {car.price}/day</p>
-          
+
           {/* Button links to car details */}
           <Link to={`/cars/${car._id}`}>
             <button className="w-full bg-blue-800 text-white py-2 px-4 rounded flex items-center justify-center">

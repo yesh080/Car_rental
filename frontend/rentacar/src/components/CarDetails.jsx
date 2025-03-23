@@ -82,7 +82,7 @@ function CarDetails() {
           {car.make} {car.model} ({car.year})
         </h1>
         <p className="text-gray-600">
-          {car.category} - <span className="font-bold">${car.price}/day</span>
+          {car.category} - <span className="font-bold">Rs {car.price}/day</span>
         </p>
 
         <form onSubmit={handleBooking} className="mt-6">

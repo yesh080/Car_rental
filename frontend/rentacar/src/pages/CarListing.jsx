@@ -103,14 +103,16 @@ function CarListing() {
 
   return (
     <div className="py-12 p-20 bg-slate-950">
-      <h1 className="text-3xl font-extrabold text-white mb-8">Available Vehicles</h1>
-      
+      <h1 className="text-3xl font-extrabold text-white mb-8">
+        Available Vehicles
+      </h1>
+
       {error && (
         <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-8">
           <p className="text-red-700">Error loading cars: {error}</p>
         </div>
       )}
-      
+
       <div className="flex flex-col sm:flex-row gap-4 mb-8">
         <input
           type="text"
@@ -130,16 +132,18 @@ function CarListing() {
           <option value="year-new">Year: Newest First</option>
         </select>
       </div>
-      
+
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {sortedCars.map(car => (
+        {sortedCars.map((car) => (
           <CarCard key={car._id} car={car} />
         ))}
       </div>
-      
+
       {sortedCars.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-white text-lg">No cars match your search criteria.</p>
+          <p className="text-white text-lg">
+            No cars match your search criteria.
+          </p>
         </div>
       )}
     </div>

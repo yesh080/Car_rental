@@ -457,8 +457,12 @@ const Dashboard = () => {
                               {booking.carId.make} {booking.carId.model}
                             </div>
                           </td>
-                          <td className="py-4 px-4">{new Date(booking.pickupDate).toDateString()}</td>
-                          <td className="py-4 px-4">{new Date(booking.dropoffDate).toDateString()}</td>
+                          <td className="py-4 px-4">
+                            {new Date(booking.pickupDate).toDateString()}
+                          </td>
+                          <td className="py-4 px-4">
+                            {new Date(booking.dropoffDate).toDateString()}
+                          </td>
                           <td className="py-4 px-4">
                             <span
                               className={`px-3 py-1 rounded-full text-sm font-medium ${
