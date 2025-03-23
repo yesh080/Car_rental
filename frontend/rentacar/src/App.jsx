@@ -4,7 +4,7 @@ import Navbar from "./pages/Navbar";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import CarListing from "./pages/CarListing";
-
+import CarDetails from './components/CarDetails';
 function App() {
   return (
     <Router>
@@ -15,6 +15,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/cars" element={<CarListing />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/cars/:id" element={<CarDetails />} /> {/* Added route */}
           </Routes>
         </div>
       </div>

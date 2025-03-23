@@ -102,107 +102,46 @@ function CarListing() {
   }
 
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-slate-950">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h1
-            className="text-4xl font-extrabold mb-4"
-            style={{ color: colors.primaryYellow }}
-          >
-            Available Vehicles
-          </h1>
-          <div
-            className="h-1 w-24 mx-auto"
-            style={{ backgroundColor: colors.accentYellow }}
-          ></div>
+    <div className="py-12 p-20">
+      <h1 className="text-3xl font-extrabold text-white mb-8">Available Vehicles</h1>
+      
+      {error && (
+        <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-8">
+          <p className="text-red-700">Error loading cars: {error}</p>
         </div>
-
-        {error && (
-          <div
-            className="rounded-lg p-4 mb-8 border-l-4"
-            style={{
-              backgroundColor: "rgba(50, 50, 50, 0.7)",
-              borderColor: colors.accentYellow,
-            }}
-          >
-            <p style={{ color: "white" }}>Error loading cars: {error}</p>
-          </div>
-        )}
-
-        <div className="flex flex-col sm:flex-row gap-4 mb-10">
-          <input
-            type="text"
-            placeholder="Search cars..."
-            className="flex-grow px-4 py-3 border rounded-md focus:outline-none focus:ring-2"
-            style={{
-              borderColor: colors.primaryBlue,
-              backgroundColor: "white",
-              color: "black",
-            }}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <select
-            className="px-4 py-3 border rounded-md focus:outline-none focus:ring-2 cursor-pointer"
-            style={{
-              borderColor: colors.accentYellow,
-              backgroundColor: colors.accentYellow,
-              color: "black",
-            }}
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
-          >
-            <option value="">Sort by</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-            <option value="year-new">Year: Newest First</option>
-          </select>
-        </div>
-
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {sortedCars.map((car, index) => (
-            <div
-              key={car._id}
-              className="transform transition duration-300 hover:scale-105"
-              style={{
-                animation: `fadeIn 0.5s ease-out forwards`,
-                animationDelay: `${index * 0.1}s`,
-                opacity: 0,
-              }}
-            >
-              <CarCard car={car} colorTheme={colors} />
-            </div>
-          ))}
-        </div>
-
-        {sortedCars.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-xl" style={{ color: "white" }}>
-              No cars match your search criteria.
-            </p>
-            <button
-              onClick={() => setSearchTerm("")}
-              className="mt-4 px-6 py-2 rounded-md font-medium transition-colors"
-              style={{ backgroundColor: colors.accentYellow, color: "black" }}
-            >
-              Clear Search
-            </button>
-          </div>
-        )}
-
-        <style jsx>{`
-          @keyframes fadeIn {
-            from {
-              opacity: 0;
-              transform: translateY(20px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-        `}</style>
+      )}
+      
+      <div className="flex flex-col sm:flex-row gap-4 mb-8">
+        <input
+          type="text"
+          placeholder="Search cars..."
+          className="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <select
+          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+        >
+          <option value="">Sort by</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="year-new">Year: Newest First</option>
+        </select>
       </div>
+      
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {sortedCars.map(car => (
+          <CarCard key={car._id} car={car} />
+        ))}
+      </div>
+      
+      {sortedCars.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-white text-lg">No cars match your search criteria.</p>
+        </div>
+      )}
     </div>
   );
 }
