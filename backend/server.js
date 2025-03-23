@@ -24,15 +24,24 @@ mongoose
 
 // Car Model
 const carSchema = new mongoose.Schema({
-  make: { type: String, required: true },
-  model: { type: String, required: true },
-  year: { type: Number, required: true },
-  price: { type: Number, required: true },
-  transmission: { type: String, default: "Automatic" },
-  seats: { type: Number, default: 5 },
-  fuelType: { type: String, default: "Gasoline" },
-  available: { type: Boolean, default: true },
-  image: { type: String },
+    make: { type: String, required: true },
+    model: { type: String, required: true },
+    year: { type: Number, required: true },
+    price: { type: Number, required: true },
+    transmission: { type: String, default: 'Automatic' },
+    seats: { type: Number, default: 5 },
+    fuelType: { type: String, default: 'Gasoline' },
+    available: { type: Boolean, default: true },
+    image: { type: String },
+    category: { type: String, default: 'Standard' },
+    description: { type: String },
+    features: [{ type: String }],
+    licensePlate: { type: String, unique: true, sparse: true }, // Added licensePlate field with sparse index
+    location: {
+        type: String,
+        enum: ["Thrissur", "Irinjalakuda", "Chalakudy"],
+        required: true,
+      },
 });
 
 const Car = mongoose.model("Car", carSchema);
@@ -154,10 +163,7 @@ app.put("/profile", authMiddleware, async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-// Booking Schema
+//booking
 const bookingSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   carId: { type: mongoose.Schema.Types.ObjectId, ref: "Car", required: true },
@@ -171,12 +177,25 @@ const Booking = mongoose.model("Booking", bookingSchema);
 // Create Booking Route
 app.post("/api/bookings", authMiddleware, async (req, res) => {
   try {
-    const { carId, pickupDate, dropoffDate } = req.body;
+    const { carId, pickupDate, dropoffDate, location } = req.body;
 
-    // Check if the car is available
-    const car = await Car.findById(carId);
-    if (!car || !car.available) {
-      return res.status(400).json({ error: "Car is not available" });
+    // Ensure pickup and dropoff dates are valid
+    if (new Date(pickupDate) >= new Date(dropoffDate)) {
+      return res.status(400).json({ error: "Invalid date range" });
+    }
+
+    // Check if the car is available for the given date range
+    const existingBookings = await Booking.find({
+      carId,
+      $or: [
+        { pickupDate: { $lt: dropoffDate }, dropoffDate: { $gt: pickupDate } },
+      ],
+    });
+
+    if (existingBookings.length > 0) {
+      return res
+        .status(400)
+        .json({ error: "Car is already booked for these dates" });
     }
 
     // Create a new booking
@@ -185,13 +204,10 @@ app.post("/api/bookings", authMiddleware, async (req, res) => {
       carId,
       pickupDate,
       dropoffDate,
+      location,
     });
+
     await booking.save();
-
-    // Mark the car as unavailable
-    car.available = false;
-    await car.save();
-
     res.status(201).json({ message: "Booking created successfully", booking });
   } catch (error) {
     console.error("Error creating booking:", error);
@@ -204,11 +220,16 @@ app.get("/api/bookings", authMiddleware, async (req, res) => {
   try {
     const bookings = await Booking.find({ userId: req.user.userId }).populate(
       "carId",
-      "make model year price image"
+      "make model year price image location"
     );
+
     res.json(bookings);
   } catch (error) {
     console.error("Error fetching bookings:", error);
     res.status(500).json({ error: "Internal server error" });
   }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

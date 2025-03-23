@@ -9,6 +9,7 @@ function CarDetails() {
   const [error, setError] = useState(null);
   const [pickupDate, setPickupDate] = useState("");
   const [dropoffDate, setDropoffDate] = useState("");
+  const [location, setLocation] = useState("Thrissur");
   const [bookingMessage, setBookingMessage] = useState("");
 
   useEffect(() => {
@@ -36,7 +37,7 @@ function CarDetails() {
       const token = localStorage.getItem("token");
       const response = await axios.post(
         "http://localhost:5000/api/bookings",
-        { carId: id, pickupDate, dropoffDate },
+        { carId: id, pickupDate, dropoffDate, location },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setBookingMessage("Booking successful!");
@@ -75,6 +76,22 @@ function CarDetails() {
 
         <form onSubmit={handleBooking} className="mt-6">
           <h3 className="text-xl font-semibold mb-4">Book this car</h3>
+          
+          {/* Location Dropdown */}
+          <div className="mb-4">
+            <label className="block text-gray-700">Location</label>
+            <select
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="w-full p-2 border rounded"
+              required
+            >
+              <option value="Thrissur">Thrissur</option>
+              <option value="Irinjalakuda">Irinjalakuda</option>
+              <option value="Chalakudy">Chalakudy</option>
+            </select>
+          </div>
+
           <div className="mb-4">
             <label className="block text-gray-700">Pickup Date</label>
             <input
