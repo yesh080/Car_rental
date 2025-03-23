@@ -102,7 +102,7 @@ function CarListing() {
   }
 
   return (
-    <div className="py-12 p-20">
+    <div className="py-12 p-20 bg-slate-950">
       <h1 className="text-3xl font-extrabold text-white mb-8">Available Vehicles</h1>
       
       {error && (

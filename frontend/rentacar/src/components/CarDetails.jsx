@@ -45,11 +45,13 @@ function CarDetails() {
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
   return (
-    <div className="max-w-6xl mx-auto p-6  bg-slate-950">
-      <Link to="/" className="text-blue-500 underline mb-4 inline-block">← Back to Listings</Link>
-
-      <div className="bg-white p-6 rounded-lg shadow-lg">
-        <img src={car.image} alt={car.model} className="w-200 mx-auto h-75 object-cover rounded-lg mb-6" />
+    <div className="max-w-0xl mx-auto p-6  bg-slate-950">
+      
+      <button className='border-white-[2vw]' >
+       <span><Link to="/" className="text-white  mb-4 inline-block">← Back to Listings</Link></span>
+      </button>
+      <div className=" m-25 bg-white p-4 rounded-lg shadow-lg">
+        <img src={car.image} alt={car.model} className="w-150 mx-auto h-75 object-cover rounded-lg mb-4" />
 
         <h1 className="text-3xl font-bold">{car.make} {car.model} ({car.year})</h1>
         <p className="text-gray-600">{car.category} - <span className="font-bold">${car.price}/day</span></p>
