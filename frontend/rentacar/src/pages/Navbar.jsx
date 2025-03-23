@@ -23,7 +23,6 @@ const NavBar = () => {
       }
     }
   }, []);
-  
 
   // Logout function
   const handleLogout = () => {
@@ -46,11 +45,11 @@ const NavBar = () => {
     <header className="flex justify-between items-center px-60 py-5 bg-slate-950 max-md:p-10 max-sm:p-5">
       {/* Logo */}
       <a href="/" aria-label="Go to homepage">
-      <img
-  src={logo}
-  alt="Logo"
-  className="rounded-md border border-black border-solid h-[42px] shadow-[0_4px_4px_rgba(0,0,0,0.25)] w-[155px] hover:opacity-80 transition-opacity duration-200 transform translate-x-[-80px]"
-/>
+        <img
+          src={logo}
+          alt="Logo"
+          className="rounded-md border border-black border-solid h-[42px] shadow-[0_4px_4px_rgba(0,0,0,0.25)] w-[155px] hover:opacity-80 transition-opacity duration-200 transform translate-x-[-80px]"
+        />
       </a>
 
       {/* Navigation Menu */}
@@ -80,28 +79,26 @@ const NavBar = () => {
               <FaUserCircle />
             </button>
 
-           {/* Dropdown Menu */}
-{dropdownOpen && (
-  <div className="absolute right-0 mt-2 w-44 bg-white shadow-lg rounded-lg z-50 border border-gray-300 overflow-hidden">
-    <button
-      onClick={() => {
-        navigate("/dashboard");
-        setDropdownOpen(false);
-      }}
-      className="block px-5 py-3 text-gray-800 hover:bg-gray-100 hover:text-slate-900 transition-all duration-200 w-full text-left font-medium"
-    >
-      Dashboard
-    </button>
-    <button
-      onClick={handleLogout}
-      className="block px-5 py-3 text-red-600 hover:bg-red-100 hover:text-red-700 transition-all duration-200 w-full text-left font-medium"
-    >
-      Logout
-    </button>
-  </div>
-)}
-
-
+            {/* Dropdown Menu */}
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-44 bg-white shadow-lg rounded-lg z-50 border border-gray-300 overflow-hidden">
+                <button
+                  onClick={() => {
+                    navigate("/dashboard");
+                    setDropdownOpen(false);
+                  }}
+                  className="block px-5 py-3 text-gray-800 hover:bg-gray-100 hover:text-slate-900 transition-all duration-200 w-full text-left font-medium"
+                >
+                  Dashboard
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="block px-5 py-3 text-red-600 hover:bg-red-100 hover:text-red-700 transition-all duration-200 w-full text-left font-medium"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           // If not logged in, show Sign In button
@@ -116,7 +113,11 @@ const NavBar = () => {
       </div>
 
       {/* Auth Modal */}
-      <AuthModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} setUser={setUser} />
+      <AuthModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        setUser={setUser}
+      />
     </header>
   );
 };

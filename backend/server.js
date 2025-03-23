@@ -36,13 +36,12 @@ const carSchema = new mongoose.Schema({
   category: { type: String, default: "Standard" },
   description: { type: String },
   features: [{ type: String }],
-  licensePlate: { type: String, unique: true, sparse: true },
+  licensePlate: { type: String, unique: true, sparse: true }, // Added licensePlate field with sparse index
   location: {
     type: String,
     enum: ["Thrissur", "Irinjalakuda", "Chalakudy"],
     required: true,
   },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Reference to the user who listed the car
 });
 
 const Car = mongoose.model("Car", carSchema);
@@ -54,6 +53,40 @@ app.get("/api/cars", async (req, res) => {
     res.json(cars);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+});
+
+app.get("/api/available-cars", async (req, res) => {
+  try {
+    const { location, pickupDate, returnDate } = req.query;
+
+    if (!location || !pickupDate || !returnDate) {
+      return res.status(400).json({ error: "Missing required parameters" });
+    }
+
+    const pickup = new Date(pickupDate);
+    const returnD = new Date(returnDate);
+
+    // Find booked cars that overlap with the requested period
+    const bookedCars = await Booking.find({
+      $or: [
+        {
+          pickupDate: { $lte: returnD },
+          returnDate: { $gte: pickup },
+        },
+      ],
+    }).distinct("carId"); // Get unique booked car IDs
+
+    // Find available cars that are NOT in the bookedCars list
+    const availableCars = await Car.find({
+      location,
+      _id: { $nin: bookedCars }, // Exclude booked cars
+    });
+
+    res.json(availableCars);
+  } catch (err) {
+    console.error("Error fetching available cars:", err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
@@ -130,18 +163,18 @@ app.post("/login", async (req, res) => {
 // Middleware to Protect Routes
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  console.log("Auth Header Received:", authHeader);
+  // console.log("Auth Header Received:", authHeader);
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ error: "No token provided" });
   }
 
   const token = authHeader.split(" ")[1];
-  console.log("Extracted Token:", token);
+  // console.log("Extracted Token:", token);
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded Token:", decoded);
+    // console.log("Decoded Token:", decoded);
 
     req.user = decoded;
     next();
@@ -169,7 +202,7 @@ app.put("/profile", authMiddleware, async (req, res) => {
 
     // Find and update the user
     const updatedUser = await User.findByIdAndUpdate(
-      req.user.userId,  // Extracted from authMiddleware
+      req.user.userId, // Extracted from authMiddleware
       { name, phone, address },
       { new: true, runValidators: true }
     ).select("-password");
@@ -185,7 +218,6 @@ app.put("/profile", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 //booking
 const bookingSchema = new mongoose.Schema({
