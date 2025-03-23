@@ -128,15 +128,25 @@ app.post("/login", async (req, res) => {
 
 // Middleware to Protect Routes
 const authMiddleware = (req, res, next) => {
-  const token = req.header("Authorization");
-  if (!token) return res.status(401).json({ error: "Access Denied" });
+  const authHeader = req.headers.authorization;
+  console.log("Auth Header Received:", authHeader);
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1];
+  console.log("Extracted Token:", token);
 
   try {
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = verified;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("Decoded Token:", decoded);
+
+    req.user = decoded;
     next();
   } catch (error) {
-    res.status(400).json({ error: "Invalid Token" });
+    console.error("JWT Verification Error:", error);
+    return res.status(401).json({ error: "Invalid token" });
   }
 };
 
@@ -150,11 +160,23 @@ app.get("/profile", authMiddleware, async (req, res) => {
 app.put("/profile", authMiddleware, async (req, res) => {
   try {
     const { name, phone, address } = req.body;
+
+    // Ensure at least one field is provided for update
+    if (!name && !phone && !address) {
+      return res.status(400).json({ error: "At least one field is required" });
+    }
+
+    // Find and update the user
     const updatedUser = await User.findByIdAndUpdate(
-      req.user.userId,
+      req.user.userId,  // Extracted from authMiddleware
       { name, phone, address },
       { new: true, runValidators: true }
     ).select("-password");
+
+    // If user not found
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
     res.json(updatedUser);
   } catch (error) {
@@ -162,6 +184,7 @@ app.put("/profile", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 //booking
 const bookingSchema = new mongoose.Schema({

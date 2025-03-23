@@ -35,13 +35,24 @@ function CarDetails() {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No token found!");
+        setBookingMessage("You must be logged in to book a car.");
+        return;
+      }
+
+      console.log("Token being sent:", token); // Debugging
+
       const response = await axios.post(
         "http://localhost:5000/api/bookings",
         { carId: id, pickupDate, dropoffDate, location },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
+      console.log("Booking response:", response.data);
       setBookingMessage("Booking successful!");
     } catch (error) {
+      console.error("Booking error:", error.response?.data);
       setBookingMessage(
         error.response?.data?.error || "Failed to book the car."
       );
@@ -55,7 +66,7 @@ function CarDetails() {
     <div className="max-w-0xl mx-auto p-6 bg-slate-950">
       <button className="border-white-[2vw]">
         <span>
-          <Link to="/" className="text-white mb-4 inline-block">
+          <Link to="/cars" className="text-white mb-4 inline-block">
             ← Back to Listings
           </Link>
         </span>
@@ -76,7 +87,7 @@ function CarDetails() {
 
         <form onSubmit={handleBooking} className="mt-6">
           <h3 className="text-xl font-semibold mb-4">Book this car</h3>
-          
+
           {/* Location Dropdown */}
           <div className="mb-4">
             <label className="block text-gray-700">Location</label>
