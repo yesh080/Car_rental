@@ -14,6 +14,8 @@ const ListCar = () => {
     category: "Standard",
     description: "",
     location: "Thrissur",
+    phone: "",
+    licensePlate: "",
   });
   const [message, setMessage] = useState("");
 
@@ -49,6 +51,8 @@ const ListCar = () => {
         category: "Standard",
         description: "",
         location: "Thrissur",
+        phone: "",
+        licensePlate: "",
       });
     } catch (error) {
       console.error("Error listing car:", error.response?.data);
@@ -118,6 +122,28 @@ const ListCar = () => {
             <option value="Irinjalakuda">Irinjalakuda</option>
             <option value="Chalakudy">Chalakudy</option>
           </select>
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">Phone number</label>
+          <input
+            type="text"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">license</label>
+          <input
+            type="text"
+            name="licensePlate"
+            value={formData.licensePlate}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
+          />
         </div>
         <div className="mb-4">
           <label className="block text-gray-700">Image URL</label>

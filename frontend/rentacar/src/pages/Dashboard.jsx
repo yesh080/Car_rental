@@ -436,7 +436,7 @@ const Dashboard = () => {
                           className="py-3 px-4 font-medium"
                           style={{ color: colors.text }}
                         >
-                          Car
+                          Car 
                         </th>
                         <th
                           className="py-3 px-4 font-medium"
@@ -449,6 +449,12 @@ const Dashboard = () => {
                           style={{ color: colors.text }}
                         >
                           Dropoff Date
+                        </th>
+                        <th
+                          className="py-3 px-4 font-medium"
+                          style={{ color: colors.text }}
+                        >
+                          Contact 
                         </th>
                         <th
                           className="py-3 px-4 font-medium"
@@ -479,6 +485,9 @@ const Dashboard = () => {
                           </td>
                           <td className="py-4 px-4">
                             {new Date(booking.dropoffDate).toDateString()}
+                          </td>
+                          <td className="py-4 px-4">
+                            {booking.carId.phone}
                           </td>
                           <td className="py-4 px-4">
                             <span
@@ -530,9 +539,6 @@ const Dashboard = () => {
           {/* Listings Tab */}
           {activeTab === "listings" && (
             <div className="p-6">
-              <h3 className="text-xl font-semibold mb-6" style={{ color: colors.text }}>
-                Your Listed Cars
-              </h3>
               <ListCar />
             </div>
           )}

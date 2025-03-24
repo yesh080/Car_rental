@@ -22,6 +22,31 @@ mongoose
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log("MongoDB Connection Error:", err));
 
+// Middleware to Protect Routes
+const authMiddleware = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  // console.log("Auth Header Received:", authHeader);
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1];
+  // console.log("Extracted Token:", token);
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // console.log("Decoded Token:", decoded);
+
+    req.user = decoded;
+    next();
+  } catch (error) {
+    console.error("JWT Verification Error:", error);
+    return res.status(401).json({ error: "Invalid token" });
+  }
+};
+
+
 // Car Model
 const carSchema = new mongoose.Schema({
   make: { type: String, required: true },
@@ -37,6 +62,7 @@ const carSchema = new mongoose.Schema({
   description: { type: String },
   features: [{ type: String }],
   licensePlate: { type: String, unique: true, sparse: true }, // Added licensePlate field with sparse index
+  phone: { type: String },
   location: {
     type: String,
     enum: ["Thrissur", "Irinjalakuda", "Chalakudy"],
@@ -103,6 +129,49 @@ app.get("/api/cars/:id", async (req, res) => {
   }
 });
 
+// Backend Route to Handle Car Listing
+app.post("/api/user-cars", authMiddleware, async (req, res) => {
+  try {
+    const { make, model, year, price, transmission, seats, fuelType, image, category, description, location, phone, licensePlate } = req.body;
+
+    // Make sure the user is logged in
+    if (!req.user) {
+      return res.status(401).json({ error: "User not authenticated" });
+    }
+
+    // Ensure required fields are provided
+    if (!make || !model || !year || !price || !phone || !licensePlate) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    // Create a new car listing
+    const car = new Car({
+      make,
+      model,
+      year,
+      price,
+      transmission,
+      seats,
+      fuelType,
+      image,
+      category,
+      description,
+      location,
+      phone, // assuming userId is stored in req.user
+      licensePlate,
+    });
+
+    // Save the car to the database
+    await car.save();
+
+    res.status(201).json({ message: "Car listed successfully", car });
+  } catch (error) {
+    console.error("Error listing car:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 // Updated User Schema with phone and address
 const UserSchema = new mongoose.Schema({
   name: String,
@@ -161,29 +230,6 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// Middleware to Protect Routes
-const authMiddleware = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  // console.log("Auth Header Received:", authHeader);
-
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "No token provided" });
-  }
-
-  const token = authHeader.split(" ")[1];
-  // console.log("Extracted Token:", token);
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // console.log("Decoded Token:", decoded);
-
-    req.user = decoded;
-    next();
-  } catch (error) {
-    console.error("JWT Verification Error:", error);
-    return res.status(401).json({ error: "Invalid token" });
-  }
-};
 
 // Protected Route Example
 app.get("/profile", authMiddleware, async (req, res) => {
@@ -227,6 +273,7 @@ const bookingSchema = new mongoose.Schema({
   pickupDate: { type: Date, required: true },
   dropoffDate: { type: Date, required: true },
   status: { type: String, default: "Active" }, // e.g., Active, Completed, Canceled
+  phone: { type: String },  // Add phone number to the booking schema
 });
 
 const Booking = mongoose.model("Booking", bookingSchema);
@@ -255,13 +302,20 @@ app.post("/api/bookings", authMiddleware, async (req, res) => {
         .json({ error: "Car is already booked for these dates" });
     }
 
-    // Create a new booking
+    // Fetch the car details to get the phone number
+    const car = await Car.findById(carId);
+    if (!car) {
+      return res.status(400).json({ error: "Car not found" });
+    }
+
+    // Create a new booking, adding the car's phone number
     const booking = new Booking({
       userId: req.user.userId,
       carId,
       pickupDate,
       dropoffDate,
       location,
+      phone: car.phone, // Add the car's phone number to the booking
     });
 
     await booking.save();
@@ -273,11 +327,12 @@ app.post("/api/bookings", authMiddleware, async (req, res) => {
 });
 
 // Get User's Bookings Route
+// Get User's Bookings Route
 app.get("/api/bookings", authMiddleware, async (req, res) => {
   try {
     const bookings = await Booking.find({ userId: req.user.userId }).populate(
       "carId",
-      "make model year price image location"
+      "make model year price image location phone" // Add phoneNumber here
     );
 
     res.json(bookings);

@@ -85,6 +85,15 @@ function CarDetails() {
           {car.category} - <span className="font-bold">Rs {car.price}/day</span>
         </p>
 
+        {/* Displaying new attributes */}
+        <div className="mt-4">
+          <p><strong>Transmission:</strong> {car.transmission}</p>
+          <p><strong>Seats:</strong> {car.seats}</p>
+          <p><strong>Fuel Type:</strong> {car.fuelType}</p>
+          <p><strong>Description:</strong> {car.description}</p>
+          <p><strong>License Plate:</strong> {car.licensePlate || "N/A"}</p>
+        </div>
+
         <form onSubmit={handleBooking} className="mt-6">
           <h3 className="text-xl font-semibold mb-4">Book this car</h3>
 
