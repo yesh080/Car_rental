@@ -46,7 +46,7 @@ npm start
 
 ### 3. Frontend Setup  
 ```bash
-cd frontend/car-rental
+cd frontend/rentacar
 npm install
 npm run dev
 ```
