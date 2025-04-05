@@ -14,28 +14,42 @@ A basic car rental system built with:
 - Booking system
 - Responsive design with Tailwind CSS  
 
-## Quick Start  
+## 🔒 Setup Instructions  
 
-1. **Clone the repo**  
-   ```bash
-   git clone https://github.com/pepesir/car-rental.git
-   cd car-rental
-   ```
+### 1. Clone the repository  
+```bash
+git clone https://github.com/pepesir/car-rental.git
+cd car-rental
+```
 
-2. **Run backend**  
-   ```bash
-   cd backend
-   npm install
-   echo "MONGO_URI=your_mongodb_uri" > .env
-   npm start
-   ```
+### 2. Backend Setup  
+```bash
+cd backend
+npm install
+```
 
-3. **Run frontend**  
-   ```bash
-   cd frontend/rentacar
-   npm install
-   npm run dev
-   ``` 
+Create `.env` file:  
+```bash
+touch .env
+```  
+Add these variables *(replace with your own values)*:  
+```env
+MONGO_URI=mongodb+srv://<username>:<password>@your-cluster.mongodb.net/car-rental
+PORT=5000
+JWT_SECRET=your_random_secret_key_here
+```
+
+Start server:  
+```bash
+npm start
+```
+
+### 3. Frontend Setup  
+```bash
+cd frontend/car-rental
+npm install
+npm run dev
+```
 
 ## Screenshots  
 *(Add some screenshots later)*  
