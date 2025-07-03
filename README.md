@@ -18,7 +18,7 @@ A basic car rental system built with:
 
 ### 1. Clone the repository  
 ```bash
-git clone https://github.com/pepesir/car-rental.git
+git clone https://github.com/roshanx0/car-rental.git
 cd car-rental
 ```
 
